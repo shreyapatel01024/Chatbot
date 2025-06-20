@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DSA chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Learn DSA Topics</div>
+
+        <div class="chat-box" id="chat-box">
+            <!-- Messages will appear here -->
+        </div>
+
+        <div class="message-container">
+            <input type="text" id="user-input" placeholder="Ask about any DSA topic..." onkeydown="checkEnter(event)">
+            <button onclick="sendUserMessage()">Send</button>
+        </div>
+    </div>
+</body>
+    <script>
+        function checkEnter(event) {
+            if (event.key === "Enter") {
+                sendUserMessage();
+            }
+        }
+
+        function sendUserMessage() {
+            const inputField = document.getElementById("user-input");
+            const userText = inputField.value.trim();
+            if (userText !== "") {
+                sendMessage(userText);
+                inputField.value = "";
+            }
+        }
+
+        function sendMessage(message) {
+            const chatBox = document.getElementById("chat-box");
+
+            const userMessage = document.createElement("div");
+            userMessage.className = "chat-message user-message";
+            userMessage.textContent = message;
+            chatBox.appendChild(userMessage);
+
+            fetch("/get", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "msg=" + encodeURIComponent(message)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const botMessage = document.createElement("div");
+                botMessage.className = "chat-message bot-message";
+                botMessage.textContent = data;
+                chatBox.appendChild(botMessage);
+                chatBox.scrollTop = chatBox.scrollHeight; // Auto scroll
+            });
+        }
+    </script>
+</html>

@@ -1,0 +1,101 @@
+body {
+    background-color: #f0e6ff;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.chat-container {
+    width: 450px;
+    margin: 50px auto;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chat-header {
+    background-color: #6a1b9a;
+    color: white;
+    padding: 18px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.chat-box {
+    height: 400px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.chat-message {
+    max-width: 75%;
+    margin: 6px 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #d1c4e9;
+    text-align: right;
+}
+
+.bot-message {
+    align-self: flex-start;
+    background-color: #f1f1f1;
+    text-align: left;
+}
+
+.message-container {
+    display: flex;
+    padding: 12px;
+    border-top: 1px solid #ccc;
+    background-color: #fafafa;
+}
+
+.message-container input {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-right: 10px;
+    outline: none;
+}
+
+.message-container button {
+    background-color: #8e24aa;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.message-container button:hover {
+    background-color: #7b1fa2;
+}
+
+/* Optional: Add scrollbar styling */
+.chat-box::-webkit-scrollbar {
+    width: 8px;
+}
+.chat-box::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+.chat-box::-webkit-scrollbar-thumb {
+    background: #c2a9e2;
+    border-radius: 10px;
+}
