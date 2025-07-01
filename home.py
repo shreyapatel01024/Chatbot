@@ -2,15 +2,8 @@ import re
 from flask import Flask,render_template, request, jsonify
 
 app = Flask(__name__)
-@app.route("/")
-def index():
-    return render_template('dash.html')
-# @app.route("/login")
-# def login():
-    # return render_template('login.html')
-# @app.route("/register")
-# def register():
-    # return render_template('register.html')
+
+
 app.run(debug=True) 
 
 # Define only the main topics with basic responses
@@ -104,9 +97,6 @@ def find_best_match(user_msg):
 
     return best_match, best_score
 
-#@app.route("/chatbot")
-#def chatbot():
-    #return render_template('chatbot.html')
 
 @app.route('/chatbot', methods=['POST'])
 def chatbot_response():
