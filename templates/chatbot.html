@@ -19,43 +19,43 @@
         </div>
     </div>
 </body>
-    <script>
-        function checkEnter(event) {
-            if (event.key === "Enter") {
-                sendUserMessage();
-            }
+<script>
+    function checkEnter(event) {
+        if (event.key === "Enter") {
+            sendUserMessage();
         }
+    }
 
-        function sendUserMessage() {
-            const inputField = document.getElementById("user-input");
-            const userText = inputField.value.trim();
-            if (userText !== "") {
-                sendMessage(userText);
-                inputField.value = "";
-            }
+    function sendUserMessage() {
+        const inputField = document.getElementById("user-input");
+        const userText = inputField.value.trim();
+        if (userText !== "") {
+            sendMessage(userText);
+            inputField.value = "";
         }
+    }
 
-        function sendMessage(message) {
-            const chatBox = document.getElementById("chat-box");
+    function sendMessage(message) {
+        const chatBox = document.getElementById("chat-box");
 
-            const userMessage = document.createElement("div");
-            userMessage.className = "chat-message user-message";
-            userMessage.textContent = message;
-            chatBox.appendChild(userMessage);
+        const userMessage = document.createElement("div");
+        userMessage.className = "chat-message user-message";
+        userMessage.textContent = message;
+        chatBox.appendChild(userMessage);
 
-            fetch("/get", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: "msg=" + encodeURIComponent(message)
-            })
-            .then(response => response.json())
-            .then(data => {
-                const botMessage = document.createElement("div");
-                botMessage.className = "chat-message bot-message";
-                botMessage.textContent = data;
-                chatBox.appendChild(botMessage);
-                chatBox.scrollTop = chatBox.scrollHeight; // Auto scroll
-            });
-        }
-    </script>
+        fetch("/chatbot", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "msg=" + encodeURIComponent(message)
+        })
+        .then(response => response.json())
+        .then(data => {
+            const botMessage = document.createElement("div");
+            botMessage.className = "chat-message bot-message";
+            botMessage.textContent = data;
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    }
+</script>
 </html>

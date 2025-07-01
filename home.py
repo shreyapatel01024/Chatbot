@@ -1,14 +1,74 @@
 import re
-from flask import Flask,render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
+# -------------------------------
+# Route to render the chatbot UI
+# -------------------------------
+@app.route("/")
+def chatbot():
+    return render_template("chatbot.html")
 
-app.run(debug=True) 
+# -------------------------------
+# API to get chatbot response
+# -------------------------------
+@app.route('/chatbot', methods=['POST'])
+def chatbot_response():
+    user_msg = request.form['msg'].strip()
+    best_match, best_score = find_best_match(user_msg)
 
-# Define only the main topics with basic responses
+    if best_score >= 0.8:
+        response = dsa_responses[best_match]
+        return jsonify(response)
+
+    return jsonify("Sorry, I don't have an answer for that yet. Try asking about Linked List, Stack, Queue, Tree, Graph, Hash Table, etc.")
+
+# -------------------------------
+# Levenshtein Similarity Functions
+# -------------------------------
+def levenshtein_distance(s1, s2):
+    len_s1, len_s2 = len(s1), len(s2)
+    dp = [[0] * (len_s2 + 1) for _ in range(len_s1 + 1)]
+
+    for i in range(len_s1 + 1):
+        dp[i][0] = i
+    for j in range(len_s2 + 1):
+        dp[0][j] = j
+
+    for i in range(1, len_s1 + 1):
+        for j in range(1, len_s2 + 1):
+            cost = 0 if s1[i - 1] == s2[j - 1] else 1
+            dp[i][j] = min(
+                dp[i - 1][j] + 1,
+                dp[i][j - 1] + 1,
+                dp[i - 1][j - 1] + cost
+            )
+
+    return dp[len_s1][len_s2]
+
+def calculate_similarity(str1, str2):
+    lev_dist = levenshtein_distance(str1, str2)
+    max_len = max(len(str1), len(str2))
+    if max_len == 0:
+        return 1.0
+    return 1 - lev_dist / max_len
+
+def find_best_match(user_msg):
+    best_match = None
+    best_score = 0.0
+    for topic in dsa_responses.keys():
+        score = calculate_similarity(user_msg.lower(), topic.lower())
+        if score > best_score:
+            best_score = score
+            best_match = topic
+    return best_match, best_score
+
+# -------------------------------
+# DSA Topics & Responses
+# -------------------------------
 dsa_responses = {
-    "linkedlist": "Here's some information about Linked Lists...",
+    "linkedlist": "A linked list is a data structure that stores a sequence of elements. Each element in the list is called a node, and each node has a reference to the next node in the list. The first node in the list is called the head, and the last node in the list is called the tail.",
     "stack": "Stacks are Last In First Out (LIFO) data structures.",
     "queue": "Queues are First In First Out (FIFO) data structures.",
     "tree": "A tree is a hierarchical data structure consisting of nodes connected by edges.",
@@ -42,7 +102,6 @@ dsa_responses = {
     "bloom filter": "A Bloom Filter is a space-efficient probabilistic data structure used to test if an element is a member of a set.",
     "union-find": "The Union-Find data structure is a way to keep track of a partition of a set into disjoint subsets.",
     "topological sort": "Topological Sort is a linear ordering of vertices in a Directed Acyclic Graph (DAG).",
-    "radix sort": "Radix Sort is a non-comparative integer sorting algorithm.",
     "bit manipulation": "Bit manipulation refers to using bitwise operations (AND, OR, XOR) to manipulate data at the bit level.",
     "matrix multiplication": "Matrix multiplication is the operation of multiplying two matrices to produce a third matrix.",
     "string matching": "String matching algorithms are designed to find a substring within a string.",
@@ -58,61 +117,8 @@ dsa_responses = {
     "graph traversal": "Graph traversal is the process of visiting all vertices in a graph, typically done via BFS or DFS."
 }
 
-# Function to calculate the Levenshtein Distance (edit distance)
-def levenshtein_distance(s1, s2):
-    len_s1, len_s2 = len(s1), len(s2)
-    dp = [[0] * (len_s2 + 1) for _ in range(len_s1 + 1)]
-    
-    for i in range(len_s1 + 1):
-        dp[i][0] = i
-    for j in range(len_s2 + 1):
-        dp[0][j] = j
-    
-    for i in range(1, len_s1 + 1):
-        for j in range(1, len_s2 + 1):
-            cost = 0 if s1[i - 1] == s2[j - 1] else 1
-            dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost)
-    
-    return dp[len_s1][len_s2]
-
-# Function to calculate similarity percentage
-def calculate_similarity(str1, str2):
-    lev_dist = levenshtein_distance(str1, str2)
-    max_len = max(len(str1), len(str2))
-    if max_len == 0:
-        return 1.0  # Both strings are empty
-    return 1 - lev_dist / max_len
-
-# Function to find the best match for the user's message
-def find_best_match(user_msg):
-    best_match = None
-    best_score = 0.0
-
-    # Compare the user message with each topic
-    for topic in dsa_responses.keys():
-        score = calculate_similarity(user_msg.lower(), topic.lower())
-        if score > best_score:
-            best_score = score
-            best_match = topic
-
-    return best_match, best_score
-
-
-@app.route('/chatbot', methods=['POST'])
-def chatbot_response():
-    user_msg = request.form['msg'].strip()
-
-    # Find the best match for the user message
-    best_match, best_score = find_best_match(user_msg)
-
-    # If the similarity score is high enough, return the corresponding response
-    if best_score >= 0.8:  # You can adjust this threshold (e.g., 0.8 means 80% match)
-        response = dsa_responses[best_match]
-        return jsonify(response)
-
-    # If no good match, return a generic response
-    return jsonify("Sorry, I don't have an answer for that yet. Try asking about Linked List, Stack, Queue, Tree, Graph, Hash Table, etc.")
-def chatbot():
-    return render_template('chatbot.html')
-if __name__ == '__main__':
+# -------------------------------
+# Run the app
+# -------------------------------
+if __name__ == "__main__":
     app.run(debug=True)
