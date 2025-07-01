@@ -1,4 +1,4 @@
-'''import re
+import re
 from flask import Flask,render_template, request, jsonify
 
 app = Flask(__name__)
@@ -126,10 +126,3 @@ def chatbot():
     return render_template('chatbot.html')
 if __name__ == '__main__':
     app.run(debug=True)
-'''
-class student:
-       name="xyz"
- s1=student()
- print(s1.name)
- s2=student()
- print(s2.name)
