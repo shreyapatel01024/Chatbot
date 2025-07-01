@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: flask-dsa-chatbot
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn home:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
